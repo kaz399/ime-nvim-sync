@@ -1,0 +1,28 @@
+# Transport keys emitted by xremap/Karabiner inside kitty:
+#   Shift+F7  -> legacy kitty encoding: ESC [ 18 ; 2 ~
+#   Shift+F12 -> legacy kitty encoding: ESC [ 24 ; 2 ~
+#
+# Neovim may canonicalize these as F19/F24.  At an ordinary interactive zsh
+# prompt, make ZLE swallow the transport sequences so Shift+Space only appears
+# to toggle the IME.
+
+_ime_nvim_sync_noop() { : }
+zle -N _ime_nvim_sync_noop
+
+# Shift+F7 / Shift+F12 legacy encodings.
+bindkey -M emacs $'\e[18;2~' _ime_nvim_sync_noop
+bindkey -M viins $'\e[18;2~' _ime_nvim_sync_noop
+bindkey -M vicmd $'\e[18;2~' _ime_nvim_sync_noop
+
+bindkey -M emacs $'\e[24;2~' _ime_nvim_sync_noop
+bindkey -M viins $'\e[24;2~' _ime_nvim_sync_noop
+bindkey -M vicmd $'\e[24;2~' _ime_nvim_sync_noop
+
+# Fallbacks for CSI-u F19/F24 representations.
+bindkey -M emacs $'\e[57382u' _ime_nvim_sync_noop
+bindkey -M viins $'\e[57382u' _ime_nvim_sync_noop
+bindkey -M vicmd $'\e[57382u' _ime_nvim_sync_noop
+
+bindkey -M emacs $'\e[57387u' _ime_nvim_sync_noop
+bindkey -M viins $'\e[57387u' _ime_nvim_sync_noop
+bindkey -M vicmd $'\e[57387u' _ime_nvim_sync_noop

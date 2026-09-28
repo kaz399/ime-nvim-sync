@@ -1,0 +1,29 @@
+# Linux / GNOME / kitty / fcitx5-mozc
+#
+# Goal:
+#   Physical Shift+Space keeps toggling fcitx5 as usual.
+#   In kitty only, Shift+F7 is sent before the toggle and Shift+F12 after it.
+#   In the tested kitty/Neovim path these arrive in Neovim as <F19>/<F24>
+#   (shifted function-key compatibility), so the Neovim module accepts both
+#   spellings.
+#
+# Why Shift+F7 / Shift+F12 instead of physical F19 / F24?
+#   On the tested GNOME + Wayland + fcitx5 setup, xremap emitted KEY_F19/F24
+#   correctly at evdev level, but fcitx5 saw unresolved keysyms (<197>/<202>)
+#   and they did not reach kitty.  Shift+F7 / Shift+F12 pass through the same
+#   stack reliably.
+#
+# If xremap reports a kitty application name other than "kitty", adjust
+# application.only below.
+
+keymap:
+  - name: "kitty: Shift+Space fcitx5 + Neovim sync"
+    application:
+      only: kitty
+    exact_match: true
+    remap:
+      Shift-Space:
+        - Shift-F7
+        - Shift-Space
+        - { sleep: 10 }
+        - Shift-F12

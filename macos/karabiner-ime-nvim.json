@@ -1,0 +1,112 @@
+{
+  "title": "Google Japanese Input + Neovim mode sync",
+  "rules": [
+    {
+      "description": "Shift+Space toggles Google Japanese Input; kitty also receives Shift+F7/Shift+F12 for Neovim",
+      "manipulators": [
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "spacebar",
+            "modifiers": {
+              "mandatory": ["shift"],
+              "optional": ["caps_lock"]
+            }
+          },
+          "to": [
+            { "key_code": "f7", "modifiers": ["left_shift"] },
+            { "key_code": "japanese_kana" }
+          ],
+          "conditions": [
+            {
+              "type": "frontmost_application_if",
+              "bundle_identifiers": ["^net\\.kovidgoyal\\.kitty$"]
+            },
+            {
+              "type": "input_source_if",
+              "input_sources": [
+                {
+                  "input_source_id": "^com\\.google\\.inputmethod\\.Japanese\\.Roman$"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "spacebar",
+            "modifiers": {
+              "mandatory": ["shift"],
+              "optional": ["caps_lock"]
+            }
+          },
+          "to": [
+            { "key_code": "japanese_eisuu" },
+            { "key_code": "f12", "modifiers": ["left_shift"] }
+          ],
+          "conditions": [
+            {
+              "type": "frontmost_application_if",
+              "bundle_identifiers": ["^net\\.kovidgoyal\\.kitty$"]
+            },
+            {
+              "type": "input_source_if",
+              "input_sources": [
+                {
+                  "input_source_id": "^com\\.google\\.inputmethod\\.Japanese\\.(base|Katakana|HalfWidthKana|FullWidthRoman)$"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "spacebar",
+            "modifiers": {
+              "mandatory": ["shift"],
+              "optional": ["caps_lock"]
+            }
+          },
+          "to": [
+            { "key_code": "japanese_kana" }
+          ],
+          "conditions": [
+            {
+              "type": "input_source_if",
+              "input_sources": [
+                {
+                  "input_source_id": "^com\\.google\\.inputmethod\\.Japanese\\.Roman$"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "spacebar",
+            "modifiers": {
+              "mandatory": ["shift"],
+              "optional": ["caps_lock"]
+            }
+          },
+          "to": [
+            { "key_code": "japanese_eisuu" }
+          ],
+          "conditions": [
+            {
+              "type": "input_source_if",
+              "input_sources": [
+                {
+                  "input_source_id": "^com\\.google\\.inputmethod\\.Japanese\\.(base|Katakana|HalfWidthKana|FullWidthRoman)$"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
