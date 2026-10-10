@@ -11,7 +11,7 @@ Target setup:
 The intended behavior is:
 
 - turning Japanese input **ON** makes Neovim enter **Insert mode**;
-- turning Japanese input **OFF** makes Neovim enter **Normal mode**;
+- turning Japanese input **OFF** makes Neovim enter **Normal mode** by default; this can be disabled to keep the current mode;
 - pressing plain `i` in Normal mode still enters Insert mode **without changing the IME**;
 - at ordinary bash/zsh prompts, `Shift+Space` toggles the IME without leaving escape-sequence junk on the command line.
 
@@ -45,7 +45,7 @@ Shift+F7 -> Shift+Space -> Shift+F12
 Neovim treats either transport key as "re-read the real fcitx5 state" and, after a short debounce, calls `fcitx5-remote`:
 
 - state `2` -> Insert mode
-- state `1` -> Normal mode
+- state `1` -> Normal mode, unless `normal_on_ime_off = false`
 
 ### macOS
 
@@ -59,7 +59,7 @@ Google Japanese Input: Japanese -> Shift+Space -> Eisu -> Shift+F12
 In Neovim:
 
 - Shift+F7 (often seen as F19) -> Insert mode
-- Shift+F12 (often seen as F24) -> Normal mode
+- Shift+F12 (often seen as F24) -> Normal mode, unless `normal_on_ime_off = false`
 
 Outside kitty, the Karabiner rule performs only the Google Japanese Input switch and does not emit the transport keys.
 
@@ -140,6 +140,18 @@ and add this to `init.lua`:
 ```lua
 require("ime_nvim_sync")
 ```
+
+To keep the current Neovim mode when Japanese input is turned **OFF**, replace that line with:
+
+```lua
+require("ime_nvim_sync").setup({
+  normal_on_ime_off = false,
+})
+```
+
+`normal_on_ime_off` defaults to `true`. With `false`, turning the IME off in Insert mode keeps Insert mode; turning it off in Normal mode keeps Normal mode. Turning the IME **ON** still enters Insert mode on both Linux and macOS.
+
+`setup()` accepts an optional table and requires `normal_on_ime_off` to be a boolean when supplied. Each call applies the defaults again, so `setup()` or `setup({})` restores `normal_on_ime_off = true`. Invalid values raise an error without changing the current setting.
 
 The module accepts both terminal representations:
 
@@ -227,7 +239,7 @@ Then in Neovim:
 
 1. start in Normal mode with IME off;
 2. `Shift+Space` -> expect IME on + Insert mode;
-3. `Shift+Space` -> expect IME off + Normal mode;
+3. `Shift+Space` -> expect IME off + Normal mode by default, or Insert mode with `normal_on_ime_off = false`;
 4. press `i` from Normal mode -> expect Insert mode while IME remains unchanged.
 
 If you want to see what Neovim calls the transport keys, temporarily map/inspect `<S-F7>`, `<F19>`, `<S-F12>`, and `<F24>`. On the tested Linux setup the shifted keys are observed as `<F19>` and `<F24>`.
@@ -235,6 +247,18 @@ If you want to see what Neovim calls the transport keys, temporarily map/inspect
 ### macOS / Google Japanese Input
 
 Use Karabiner-EventViewer first to verify the input source IDs. Then repeat the same Neovim behavior test above.
+
+### Local regression tests
+
+Run from the repository root:
+
+```bash
+NVIM_LOG_FILE=/tmp/ime-nvim-sync-tests.log nvim --headless -u NONE -i NONE -n \
+  -c 'lua local ok, err = pcall(dofile, "tests/ime_nvim_sync_test.lua"); if not ok then print(err); vim.cmd("cquit 1") end' \
+  -c 'qa!'
+```
+
+The tests stub the OS and IME APIs to check both platform paths, configuration, and Linux debounce/error handling without switching the real IME. They do not verify the physical key transport or real IME timing.
 
 ## References
 

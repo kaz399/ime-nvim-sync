@@ -16,6 +16,25 @@
 --   delay, query fcitx5-remote and make Neovim match the actual IME state.
 
 local M = {}
+local config = { normal_on_ime_off = true }
+
+function M.setup(opts)
+  if opts == nil then
+    opts = {}
+  end
+  if type(opts) ~= "table" then
+    error("ime_nvim_sync.setup: expected a table", 2)
+  end
+
+  local normal_on_ime_off = opts.normal_on_ime_off
+  if normal_on_ime_off == nil then
+    normal_on_ime_off = true
+  elseif type(normal_on_ime_off) ~= "boolean" then
+    error("ime_nvim_sync.setup: normal_on_ime_off must be a boolean", 2)
+  end
+
+  config.normal_on_ime_off = normal_on_ime_off
+end
 
 local ON_KEYS = { "<F19>", "<S-F7>" }
 local OFF_KEYS = { "<F24>", "<S-F12>" }
@@ -31,7 +50,7 @@ local function enter_insert()
 end
 
 local function enter_normal()
-  if mode_is_insert() then
+  if config.normal_on_ime_off and mode_is_insert() then
     vim.cmd("stopinsert")
   end
 end

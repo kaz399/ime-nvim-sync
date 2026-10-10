@@ -2,3 +2,6 @@
 --   ~/.config/nvim/lua/ime_nvim_sync.lua
 -- Then add this to init.lua:
 require("ime_nvim_sync")
+
+-- IME OFFでも現在の編集モードを維持する場合は、上のrequireを次に置き換える。
+-- require("ime_nvim_sync").setup({ normal_on_ime_off = false })
